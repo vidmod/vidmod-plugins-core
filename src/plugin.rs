@@ -2,13 +2,10 @@ use vidmod_node::Node;
 use vidmod_plugin::Plugin;
 
 pub const RAW_FILE_SOURCE: Plugin = Plugin {
-    make_node: |params| Node::Source(Box::new(crate::raw_file::RawFileSource::new(params))),
-};
-
-pub const RAW_FILE_SOURCE2: Plugin = Plugin {
-    make_node: |params| Node::N2(Box::new(crate::raw_file::RawFileSource2::new(params))),
+    make_node: |params| Node::N2(Box::new(crate::raw_file::RawFileSource::new(params))),
 };
 
 pub const RAW_FILE_SINK: Plugin = Plugin {
-    make_node: |params| Node::Sink(Box::new(crate::raw_file::RawFileSink::new(params))),
+    make_node: |params| Node::N2(Box::new(crate::raw_file::RawFileSink::new(params))),
 };
+
