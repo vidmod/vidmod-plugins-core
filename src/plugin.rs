@@ -12,3 +12,11 @@ pub const RAW_FILE_SINK: Plugin = Plugin {
 pub const CONVERT: Plugin = Plugin {
     make_node: |params| Node::N2(Box::new(crate::conversion::Convert::new(params))),
 };
+
+pub const IMAGE_SOURCE: Plugin = Plugin {
+    make_node: |params| Node::N2(Box::new(crate::image::ImageSource::new(params))),
+};
+
+pub const IMAGE_SINK: Plugin = Plugin {
+    make_node: |params| Node::N2(Box::new(crate::image::ImageSink::new(params))),
+};

@@ -6,4 +6,5 @@ pub mod plugin;
 
 pub mod constant;
 pub mod conversion;
+pub mod image;
 pub mod raw_file;

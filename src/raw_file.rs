@@ -95,6 +95,12 @@ impl Node2T for RawFileSink {
                     self.file.write_all(&[v]).unwrap();
                     true
                 }
+                FrameSingle::RGBAx2(v) => {
+                    for px in v.iter() {
+                        self.file.write_all(&[px.r, px.g, px.b, px.a]).unwrap();
+                    }
+                    true
+                }
                 _ => todo!(),
             }
         } else {
