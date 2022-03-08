@@ -3,18 +3,18 @@ use std::collections::BTreeMap;
 use vidmod_macros::*;
 use vidmod_node::{FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort};
 
-#[node]
+#[node_decl]
 pub struct Convert {
     from: FrameKind,
     to:   FrameKind,
 }
 
 impl Convert {
+    #[node_new]
     pub fn new(params: BTreeMap<String, String>) -> Self {
         let from = params.get("from").unwrap().as_str().into();
         let to = params.get("to").unwrap().as_str().into();
 
-        #[node2]
         Self { from, to }
     }
 }

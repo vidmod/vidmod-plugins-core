@@ -8,13 +8,14 @@ use std::{
 use vidmod_macros::*;
 use vidmod_node::{Frame, FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort};
 
-#[node]
+#[node_decl]
 pub struct RawFileSource {
     file: File,
     kind: FrameKind,
 }
 
 impl RawFileSource {
+    #[node_new]
     pub fn new(params: BTreeMap<String, String>) -> Self {
         let file = File::open(
             PathBuf::from(params.get("vidmod.path").unwrap()).join(params.get("file").unwrap()),
@@ -22,7 +23,6 @@ impl RawFileSource {
         .unwrap();
         let kind = params.get("kind").unwrap().as_str().into();
 
-        #[node2]
         Self { file, kind }
     }
 }
@@ -64,13 +64,14 @@ impl Node2T for RawFileSource {
     }
 }
 
-#[node]
+#[node_decl]
 pub struct RawFileSink {
     file: File,
     kind: FrameKind,
 }
 
 impl RawFileSink {
+    #[node_new]
     pub fn new(params: BTreeMap<String, String>) -> Self {
         let file = File::create(
             PathBuf::from(params.get("vidmod.path").unwrap()).join(params.get("file").unwrap()),
@@ -78,7 +79,6 @@ impl RawFileSink {
         .unwrap();
         let kind = params.get("kind").unwrap().as_str().into();
 
-        #[node2]
         Self { file, kind }
     }
 }
