@@ -62,6 +62,11 @@ impl Node2T for RawFileSource {
             false
         }
     }
+
+    fn finish(&mut self) -> bool {
+        // We cannot possibly have more work to do, as we'll've already reached the EOF.
+        true
+    }
 }
 
 #[node_decl]
@@ -106,5 +111,10 @@ impl Node2T for RawFileSink {
         } else {
             false
         }
+    }
+
+    fn finish(&mut self) -> bool {
+        // We want to be ticked until our input buffer is empty
+        false
     }
 }

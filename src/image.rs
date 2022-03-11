@@ -1,9 +1,4 @@
-use std::{
-    collections::BTreeMap,
-    fmt::Debug,
-    fs::File,
-    path::PathBuf,
-};
+use std::{collections::BTreeMap, fmt::Debug, fs::File, path::PathBuf};
 
 use dynfmt::Format;
 use image::{ImageBuffer, ImageOutputFormat};
@@ -86,6 +81,11 @@ impl Node2T for ImageSource {
             false
         }
     }
+
+    fn finish(&mut self) -> bool {
+        // We cannot possibly have more work to do
+        true
+    }
 }
 
 #[node_decl]
@@ -118,14 +118,15 @@ impl Node2T for ImageSink {
 
     fn tick(&mut self) -> bool {
         if self.inbuf_avail("in") > 0 {
+            let filename = String::from(
+                dynfmt::curly::SimpleCurlyFormat
+                    .format(&self.template, btreemap! {"frame" => self.frame})
+                    .unwrap(),
+            );
+            println!("Creating output file {}", filename);
+            let mut file = File::create(self.path.join(filename)).unwrap();
             match self.inbuf_get_single("in") {
                 FrameSingle::RGBA8x2(v) => {
-                    let filename = String::from(
-                        dynfmt::curly::SimpleCurlyFormat
-                            .format(&self.template, btreemap! {"frame" => self.frame})
-                            .unwrap(),
-                    );
-                    let mut file = File::create(self.path.join(filename)).unwrap();
                     let buf = unsafe {
                         ::std::slice::from_raw_parts(
                             v.as_ptr() as *const u8,
@@ -133,7 +134,6 @@ impl Node2T for ImageSink {
                         )
                     }
                     .to_vec();
-                    println!("{},{},{}", buf.len(), v.ncols(), v.nrows());
                     let buf: ImageBuffer<image::Rgba<u8>, Vec<u8>> = image::ImageBuffer::from_vec(
                         v.ncols().try_into().unwrap(),
                         v.nrows().try_into().unwrap(),
@@ -142,13 +142,18 @@ impl Node2T for ImageSink {
                     .unwrap();
                     buf.write_to(&mut file, ImageOutputFormat::Jpeg(50))
                         .unwrap();
-                    self.frame += 1;
-                    true
                 }
-                _ => todo!(),
+                v => todo!("{:?}", FrameKind::from(&v)),
             }
+            self.frame += 1;
+            true
         } else {
             false
         }
+    }
+
+    fn finish(&mut self) -> bool {
+        // We want to be ticked until our input buffer is empty
+        false
     }
 }

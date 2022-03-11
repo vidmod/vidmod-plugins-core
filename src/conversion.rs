@@ -57,4 +57,9 @@ impl Node2T for Convert {
             false
         }
     }
+
+    fn finish(&mut self) -> bool {
+        // We want to be ticked until our input buffer is empty
+        false
+    }
 }
