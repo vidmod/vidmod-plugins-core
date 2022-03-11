@@ -143,6 +143,17 @@ impl Node2T for ImageSink {
                     buf.write_to(&mut file, ImageOutputFormat::Jpeg(50))
                         .unwrap();
                 }
+                FrameSingle::U16x2(v) => {
+                    let buf = v.iter().copied().collect();
+                    let buf: ImageBuffer<image::Luma<u16>, Vec<u16>> =
+                        image::ImageBuffer::from_vec(
+                            v.ncols().try_into().unwrap(),
+                            v.nrows().try_into().unwrap(),
+                            buf,
+                        )
+                        .unwrap();
+                    buf.write_to(&mut file, ImageOutputFormat::Png).unwrap();
+                }
                 v => todo!("{:?}", FrameKind::from(&v)),
             }
             self.frame += 1;
