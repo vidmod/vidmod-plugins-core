@@ -10,7 +10,7 @@ use image::{ImageBuffer, ImageOutputFormat};
 use maplit::btreemap;
 use ndarray::ArcArray2;
 use vidmod_macros::*;
-use vidmod_node::{FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort, RGBA};
+use vidmod_node::{FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort, RGBA8};
 
 struct PngReader(png::Reader<File>);
 
@@ -39,7 +39,7 @@ impl ImageSource {
 
         let reader = PngReader(decoder.read_info().unwrap());
         let kind = match (reader.0.info().bit_depth, reader.0.info().color_type) {
-            (png::BitDepth::Eight, png::ColorType::Rgba) => FrameKind::RGBAx2,
+            (png::BitDepth::Eight, png::ColorType::Rgba) => FrameKind::RGBA8x2,
             (a, b) => todo!("{:?},{:?}", a, b),
         };
 
@@ -55,14 +55,14 @@ impl Node2T for ImageSource {
     fn tick(&mut self) -> bool {
         if self.outbuf_avail("out") > 0 {
             match self.kind {
-                FrameKind::RGBAx2 => {
+                FrameKind::RGBA8x2 => {
                     let width = self.reader.0.info().width as usize;
                     let height = self.reader.0.info().height as usize;
                     let mut buf = vec![0u8; width * height * 4];
                     if self.reader.0.next_frame(&mut buf).is_ok() {
                         let pixels = unsafe {
                             ::std::slice::from_raw_parts(
-                                buf.as_ptr() as *const RGBA,
+                                buf.as_ptr() as *const RGBA8,
                                 width * height,
                             )
                         }
@@ -70,8 +70,9 @@ impl Node2T for ImageSource {
 
                         self.outbuf_put_single(
                             "out",
-                            FrameSingle::RGBAx2(
-                                ArcArray2::<RGBA>::from_shape_vec((width, height), pixels).unwrap(),
+                            FrameSingle::RGBA8x2(
+                                ArcArray2::<RGBA8>::from_shape_vec((width, height), pixels)
+                                    .unwrap(),
                             ),
                         );
                         true
@@ -118,7 +119,7 @@ impl Node2T for ImageSink {
     fn tick(&mut self) -> bool {
         if self.inbuf_avail("in") > 0 {
             match self.inbuf_get_single("in") {
-                FrameSingle::RGBAx2(v) => {
+                FrameSingle::RGBA8x2(v) => {
                     let filename = String::from(
                         dynfmt::curly::SimpleCurlyFormat
                             .format(&self.template, btreemap! {"frame" => self.frame})
