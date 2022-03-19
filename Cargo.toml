@@ -13,3 +13,6 @@ png = "0.17.5"
 image = "0.24.1"
 dynfmt = { version = "0.1.5", features = ["curly"] }
 maplit = "1.0.2"
+byte-slice-cast = "1.2.1"
+tracing = "0.1.32"
+all_asserts = "2.3.1"
