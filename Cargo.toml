@@ -3,6 +3,8 @@ name = "vidmod-plugins-core"
 version = "0.1.0"
 edition = "2018"
 rust-version = "1.51"
+description = "Core vidmod plugins"
+repository = "https://github.com/vidmod/vidmod-plugins-core"
 license = "MIT"
 
 [dependencies]
