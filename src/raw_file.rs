@@ -8,7 +8,11 @@ use std::{
 use all_asserts::assert_le;
 use byte_slice_cast::{AsByteSlice, AsSliceOf};
 use vidmod_macros::*;
-use vidmod_node::{Frame, FrameKind, LimVecDeque, Node2MT, Node2T, PullPort, PushPort};
+use vidmod_node::{
+    frame::{Frame, FrameKind},
+    limvecdeque::LimVecDeque,
+    Node2MT, Node2T, PullPort, PushPort,
+};
 
 #[node_decl]
 pub struct RawFileSource {

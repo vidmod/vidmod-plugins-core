@@ -1,7 +1,10 @@
 use std::{cmp::min, collections::BTreeMap, convert::TryInto};
 
 use vidmod_macros::*;
-use vidmod_node::{Frame, FrameKind, Node2MT, Node2T, PullPort, PushPort};
+use vidmod_node::{
+    frame::{Frame, FrameKind},
+    Node2MT, Node2T, PullPort, PushPort,
+};
 
 #[node_decl]
 pub struct Convert {

@@ -1,11 +1,14 @@
-use std::{collections::BTreeMap, fmt::Debug, fs::File, path::PathBuf, convert::TryInto};
+use std::{collections::BTreeMap, convert::TryInto, fmt::Debug, fs::File, path::PathBuf};
 
 use dynfmt::Format;
 use image::{ImageBuffer, ImageOutputFormat};
 use maplit::btreemap;
 use ndarray::ArcArray2;
 use vidmod_macros::*;
-use vidmod_node::{FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort, RGBA8};
+use vidmod_node::{
+    frame::{FrameKind, FrameSingle, RGBA8},
+    Node2MT, Node2T, PullPort, PushPort,
+};
 
 struct PngReader(png::Reader<File>);
 
