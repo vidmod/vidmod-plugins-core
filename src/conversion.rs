@@ -1,7 +1,7 @@
-use std::collections::BTreeMap;
+use std::{cmp::min, collections::BTreeMap};
 
 use vidmod_macros::*;
-use vidmod_node::{FrameKind, FrameSingle, Node2MT, Node2T, PullPort, PushPort};
+use vidmod_node::{Frame, FrameKind, Node2MT, Node2T, PullPort, PushPort};
 
 #[node_decl]
 pub struct Convert {
@@ -26,32 +26,44 @@ impl Node2T for Convert {
     }
 
     fn tick(&mut self) -> bool {
-        if self.inbuf_avail("in") > 0 {
-            if self.outbuf_avail("out") > 0 {
-                match (self.inbuf_get_single("in"), self.to) {
-                    (FrameSingle::U8(v), FrameKind::U8) => {
-                        self.outbuf_put_single("out", FrameSingle::U8(v));
-                        true
-                    }
-                    (FrameSingle::U16(v), FrameKind::U16) => {
-                        self.outbuf_put_single("out", FrameSingle::U16(v));
-                        true
-                    }
-                    (FrameSingle::U8(v), FrameKind::U16) => {
-                        self.outbuf_put_single("out", FrameSingle::U16(u16::from(v) * 256u16));
-                        true
-                    }
-                    (FrameSingle::U16(v), FrameKind::U8) => {
-                        self.outbuf_put_single(
-                            "out",
-                            FrameSingle::U8((v / 256).try_into().unwrap()),
-                        );
-                        true
-                    }
-                    _ => todo!("Conversion {:?} -> {:?}", self.from, self.to),
+        let to_transfer = min(self.inbuf_avail("in"), self.outbuf_avail("out"));
+
+        if to_transfer > 0 {
+            match (self.inbuf_get("in", to_transfer), self.to) {
+                (Frame::U8(v), FrameKind::U8) => {
+                    self.outbuf_put("out", Frame::U8(v));
+                    true
                 }
-            } else {
-                false
+                (Frame::U16(v), FrameKind::U16) => {
+                    self.outbuf_put("out", Frame::U16(v));
+                    true
+                }
+                (Frame::U8(v), FrameKind::U16) => {
+                    self.outbuf_put(
+                        "out",
+                        Frame::U16(v.iter().map(|x| u16::from(*x) * 256u16).collect()),
+                    );
+                    true
+                }
+                (Frame::U16(v), FrameKind::U8) => {
+                    self.outbuf_put(
+                        "out",
+                        Frame::U8(v.iter().map(|x| (x / 256).try_into().unwrap()).collect()),
+                    );
+                    true
+                }
+                (Frame::F32(v), FrameKind::U16) => {
+                    self.outbuf_put(
+                        "out",
+                        Frame::U16(
+                            v.iter()
+                                .map(|x| (x * 65535.0).clamp(0.0, 65535.0).round() as u16)
+                                .collect(),
+                        ),
+                    );
+                    true
+                }
+                _ => todo!("Conversion {:?} -> {:?}", self.from, self.to),
             }
         } else {
             false
