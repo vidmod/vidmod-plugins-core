@@ -1,7 +1,8 @@
 [package]
 name = "vidmod-plugins-core"
 version = "0.1.0"
-edition = "2021"
+edition = "2018"
+rust-version = "1.51"
 license = "MIT"
 
 [dependencies]
@@ -10,9 +11,8 @@ vidmod-node = { version = "0.1.0", path = "../../vidmod-node" }
 vidmod-macros = { version = "0.1.0", path = "../../vidmod-macros" }
 anyhow = "1.0.55"
 png = "0.17.5"
-image = "0.24.1"
+image = { version = "0.24.1", default-features = false, features = ["gif", "jpeg", "ico", "png", "pnm", "tga", "tiff", "webp", "bmp", "hdr", "dxt", "dds", "farbfeld", "jpeg_rayon"] }
 dynfmt = { version = "0.1.5", features = ["curly"] }
 maplit = "1.0.2"
 byte-slice-cast = "1.2.1"
-tracing = "0.1.32"
 all_asserts = "2.3.1"

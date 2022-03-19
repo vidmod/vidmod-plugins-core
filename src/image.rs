@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt::Debug, fs::File, path::PathBuf};
+use std::{collections::BTreeMap, fmt::Debug, fs::File, path::PathBuf, convert::TryInto};
 
 use dynfmt::Format;
 use image::{ImageBuffer, ImageOutputFormat};
