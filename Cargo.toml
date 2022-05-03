@@ -7,6 +7,9 @@ description = "Core vidmod plugins"
 repository = "https://github.com/vidmod/vidmod-plugins-core"
 license = "MIT"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 ndarray = "0.15.4"
 vidmod-node = { version = "0.1.0", path = "../../vidmod-node" }
